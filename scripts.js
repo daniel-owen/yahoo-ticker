@@ -1,5 +1,4 @@
-// fix bug where returning to page and adding a stock clears existing watchlist
-
+// change so that symbols are saved instead of JSON objects; want new data to be retreived every time watchlist is viewed 
 
 $(document).ready(function(){
 	// empty array to store watchlist symbols
@@ -32,7 +31,7 @@ $(document).ready(function(){
 
 	$('.add-stock').click(function(){
 		var newListItems = [];
-		var existingList = JSON.parse(localStorage.getItem('watchList'));
+		var existingList = JSON.parse(localStorage.getItem('watchList')); // extract ticker symbols from JSON objects
 		var combinedList = [];
 		var symbol = $('#symbol').val();
 		var url = 'http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20("' + symbol + '")%0A%09%09&env=http%3A%2F%2Fdatatables.org%2Falltables.env&format=json';
@@ -76,10 +75,15 @@ $(document).ready(function(){
 
 function buildNewTable(stockInfo){
 
-	if(stockInfo.Change[0] == '+'){
-		var upDown = "success";
-	}else if(stockInfo.Change[0] == '-'){
-		var upDown = "danger";
+	if(stockInfo.Change){
+		if(stockInfo.Change[0] == '+'){
+			var upDown = "success";
+		}else if(stockInfo.Change[0] == '-'){
+			var upDown = "danger";
+		}	
+	}else{
+		var upDown = '';
+		stockInfo.Change = 0;
 	}
 
 	var htmlString = '';
